@@ -81,8 +81,8 @@ def test_simple_instance_dict_attribute(caplog: pytest.LogCaptureFixture) -> Non
     instance.dict_attr["first"] = "Ciao"
     instance.dict_attr["second"] = "World"
 
-    assert "'dict_attr[first]' changed to 'Ciao'" in caplog.text  # noqa: S101
-    assert "'dict_attr[second]' changed to 'World'" in caplog.text  # noqa: S101
+    assert "'dict_attr['first']' changed to 'Ciao'" in caplog.text  # noqa: S101
+    assert "'dict_attr['second']' changed to 'World'" in caplog.text  # noqa: S101
 
 
 def test_simple_class_dict_attribute(caplog: pytest.LogCaptureFixture) -> None:
@@ -94,8 +94,8 @@ def test_simple_class_dict_attribute(caplog: pytest.LogCaptureFixture) -> None:
     instance.dict_attr["first"] = "Ciao"
     instance.dict_attr["second"] = "World"
 
-    assert "'dict_attr[first]' changed to 'Ciao'" in caplog.text  # noqa: S101
-    assert "'dict_attr[second]' changed to 'World'" in caplog.text  # noqa: S101
+    assert "'dict_attr['first']' changed to 'Ciao'" in caplog.text  # noqa: S101
+    assert "'dict_attr['second']' changed to 'World'" in caplog.text  # noqa: S101
 
 
 def test_instance_dict_attribute(caplog: pytest.LogCaptureFixture) -> None:
@@ -113,7 +113,7 @@ def test_instance_dict_attribute(caplog: pytest.LogCaptureFixture) -> None:
     instance.add_observer(MyObserver())
     instance.dict_attr["first"].name = "Ciao"
 
-    assert "'dict_attr[first].name' changed to 'Ciao'" in caplog.text  # noqa: S101
+    assert "'dict_attr['first'].name' changed to 'Ciao'" in caplog.text  # noqa: S101
 
 
 def test_class_dict_attribute(caplog: pytest.LogCaptureFixture) -> None:
@@ -127,7 +127,7 @@ def test_class_dict_attribute(caplog: pytest.LogCaptureFixture) -> None:
     instance.add_observer(MyObserver())
     instance.dict_attr["first"].name = "Ciao"
 
-    assert "'dict_attr[first].name' changed to 'Ciao'" in caplog.text  # noqa: S101
+    assert "'dict_attr['first'].name' changed to 'Ciao'" in caplog.text  # noqa: S101
 
 
 def test_removed_observer_on_class_list_attr(caplog: pytest.LogCaptureFixture) -> None:
@@ -173,13 +173,13 @@ def test_removed_observer_on_instance_dict_attr(
     instance.add_observer(MyObserver())
     instance.changed_dict_attr["nested"] = "Ciao"
 
-    assert "'changed_dict_attr[nested]' changed to 'Ciao'" in caplog.text  # noqa: S101
+    assert "'changed_dict_attr['nested']' changed to 'Ciao'" in caplog.text
     caplog.clear()
 
     instance.nested_attr.name = "Hi"
 
     assert "'nested_attr.name' changed to 'Hi'" in caplog.text
-    assert "'changed_dict_attr[nested].name' changed to 'Hi'" not in caplog.text
+    assert "'changed_dict_attr['nested'].name' changed to 'Hi'" not in caplog.text
 
 
 def test_removed_observer_on_instance_list_attr(
@@ -229,10 +229,27 @@ def test_removed_observer_on_class_dict_attr(caplog: pytest.LogCaptureFixture) -
     instance.add_observer(MyObserver())
     instance.changed_dict_attr["nested"] = "Ciao"
 
-    assert "'changed_dict_attr[nested]' changed to 'Ciao'" in caplog.text  # noqa: S101
+    assert "'changed_dict_attr['nested']' changed to 'Ciao'" in caplog.text
     caplog.clear()
 
     instance.nested_attr.name = "Hi"
 
     assert "'nested_attr.name' changed to 'Hi'" in caplog.text
-    assert "'changed_dict_attr[nested].name' changed to 'Hi'" not in caplog.text
+    assert "'changed_dict_attr['nested'].name' changed to 'Hi'" not in caplog.text
+
+
+def test_nested_dict_instances(caplog: pytest.LogCaptureFixture) -> None:
+    dict_instance = {"first": "Hello", "second": "World"}
+
+    class MyObservable(observable_pattern.Observable):
+        def __init__(self) -> None:
+            super().__init__()
+            self.nested_dict_attr = {"nested": dict_instance}
+
+    instance = MyObservable()
+    instance.add_observer(MyObserver())
+    instance.nested_dict_attr["nested"]["first"] = "Ciao"
+
+    assert (  # noqa: S101
+        "'nested_dict_attr['nested']['first']' changed to 'Ciao'" in caplog.text
+    )

@@ -127,7 +127,8 @@ class _ObservableDict(dict, ObservableObject):
                 observer._notify_observers(extendend_attr_path, value)
 
     def _remove_observer_if_observable(self, name: str) -> None:
-        current_value = self.get(name[2:-2], None)
+        key = name[2:-2]
+        current_value = self.get(key, None)
 
         if isinstance(current_value, ObservableObject):
             current_value._remove_observer(self, name)
