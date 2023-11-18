@@ -107,11 +107,9 @@ class _ObservableDict(dict, ObservableObject):
     ) -> None:
         self._original_dict = original_dict
         ObservableObject.__init__(self)
-        for k in self._original_dict:
-            key = k
-            value = self.pop(key)
-            self[key] = self.initialise_new_objects(key, value)
         dict.__init__(self)
+        for key, value in self._original_dict.items():
+            self[key] = self.initialise_new_objects(key, value)
 
     def __setitem__(self, key: Any, value: Any) -> None:  # type: ignore[override]
         if not isinstance(key, str):
