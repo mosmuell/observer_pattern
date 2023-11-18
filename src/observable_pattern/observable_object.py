@@ -9,8 +9,6 @@ class ObservableObject:
     _dict_mapping: ClassVar[dict[int, "_ObservableDict"]] = {}
 
     def __init__(self) -> None:
-        # TODO(mosmuell): Implement an "initialised" attribute. I don't want to convert
-        # the _observers into a _ObservableDict
         self._observers: dict[str | None, list["ObservableObject"]] = {}
 
     def add_observer(
@@ -40,25 +38,26 @@ class ObservableObject:
                 observer.notify_observers(extendend_attr_path, value)
 
     def initialise_new_objects(self, attr_name_or_key: Any, value: Any) -> Any:
+        new_value = value
         if isinstance(value, list):
             if id(value) in self._list_mapping:
                 # If the list `value` was already referenced somewhere else
-                value = self._list_mapping[id(value)]
+                new_value = self._list_mapping[id(value)]
             else:
                 # convert the builtin list into a ObservableList
-                value = _ObservableList(original_list=value)
-                self._list_mapping[id(value)] = value
+                new_value = _ObservableList(original_list=value)
+                self._list_mapping[id(value)] = new_value
         elif isinstance(value, dict):
             if id(value) in self._dict_mapping:
                 # If the list `value` was already referenced somewhere else
-                value = self._dict_mapping[id(value)]
+                new_value = self._dict_mapping[id(value)]
             else:
                 # convert the builtin list into a ObservableList
-                value = _ObservableDict(original_dict=value)
-                self._dict_mapping[id(value)] = value
-        if isinstance(value, ObservableObject):
-            value.add_observer(self, str(attr_name_or_key))
-        return value
+                new_value = _ObservableDict(original_dict=value)
+                self._dict_mapping[id(value)] = new_value
+        if isinstance(new_value, ObservableObject):
+            new_value.add_observer(self, str(attr_name_or_key))
+        return new_value
 
 
 class _ObservableList(list, ObservableObject):
