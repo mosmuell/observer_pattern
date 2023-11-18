@@ -64,13 +64,13 @@ class _ObservableList(list, ObservableObject):
         ObservableObject.__init__(self)
         list.__init__(self, self._original_list)
         for i, item in enumerate(self._original_list):
-            super().__setitem__(i, self._initialise_new_objects(i, item))
+            super().__setitem__(i, self._initialise_new_objects(f"[{i}]", item))
 
     def __setitem__(self, key: int, value: Any) -> None:  # type: ignore[override]
         if hasattr(self, "_observers"):
-            self._remove_observer_if_observable(key)
-            value = self._initialise_new_objects(key, value)
-            self._notify_observers(key, value)
+            self._remove_observer_if_observable(f"[{key}]")
+            value = self._initialise_new_objects(f"[{key}]", value)
+            self._notify_observers(f"[{key}]", value)
 
         super().__setitem__(key, value)
 
@@ -78,20 +78,17 @@ class _ObservableList(list, ObservableObject):
         changed_attribute = str(changed_attribute)
         for attr_name, observer_list in self._observers.items():
             for observer in observer_list:
-                key, rest = (
-                    changed_attribute.split(".")[0],
-                    changed_attribute.split(".")[1:],
-                )
-                extendend_attr_path = ".".join([f"[{key}]", *rest])
+                extendend_attr_path = changed_attribute
                 if attr_name != "":
                     extendend_attr_path = f"{attr_name}{extendend_attr_path}"
                 observer._notify_observers(extendend_attr_path, value)
 
     def _remove_observer_if_observable(self, name: Any) -> None:
-        current_value = self.__getitem__(name)
+        key = int(name[1:-1])
+        current_value = self.__getitem__(key)
 
         if isinstance(current_value, ObservableObject):
-            current_value._remove_observer(self, str(name))
+            current_value._remove_observer(self, name)
 
 
 # TODO(mosmuell): keys must be strings.. Maybe with a metaclass?
@@ -104,7 +101,7 @@ class _ObservableDict(dict, ObservableObject):
         ObservableObject.__init__(self)
         dict.__init__(self)
         for key, value in self._original_dict.items():
-            super().__setitem__(key, self._initialise_new_objects(key, value))
+            super().__setitem__(key, self._initialise_new_objects(f"['{key}']", value))
 
     def __setitem__(self, key: Any, value: Any) -> None:  # type: ignore[override]
         if not isinstance(key, str):
@@ -114,9 +111,9 @@ class _ObservableDict(dict, ObservableObject):
             key = str(key)
 
         if hasattr(self, "_observers"):
-            self._remove_observer_if_observable(key)
+            self._remove_observer_if_observable(f"['{key}']")
             value = self._initialise_new_objects(key, value)
-            self._notify_observers(key, value)
+            self._notify_observers(f"['{key}']", value)
 
         super().__setitem__(key, value)
 
@@ -124,17 +121,13 @@ class _ObservableDict(dict, ObservableObject):
         changed_attribute = str(changed_attribute)
         for attr_name, observer_list in self._observers.items():
             for observer in observer_list:
-                key, rest = (
-                    changed_attribute.split(".")[0],
-                    changed_attribute.split(".")[1:],
-                )
-                extendend_attr_path = ".".join([f"[{key}]", *rest])
+                extendend_attr_path = changed_attribute
                 if attr_name != "":
                     extendend_attr_path = f"{attr_name}{extendend_attr_path}"
                 observer._notify_observers(extendend_attr_path, value)
 
     def _remove_observer_if_observable(self, name: str) -> None:
-        current_value = self.get(name, None)
+        current_value = self.get(name[2:-2], None)
 
         if isinstance(current_value, ObservableObject):
             current_value._remove_observer(self, name)
