@@ -47,14 +47,14 @@ class ObservableObject:
                 # convert the builtin list into a ObservableList
                 value = _ObservableList(original_list=value)
                 self._list_mapping[id(value)] = value
-        # elif isinstance(value, dict):
-        #     if id(value) in self._dict_mapping:
-        #         # If the list `value` was already referenced somewhere else
-        #         value = self._dict_mapping[id(value)]
-        #     else:
-        #         # convert the builtin list into a ObservableList
-        #         value = _ObservableDict(original_dict=value)
-        #         self._dict_mapping[id(value)] = value
+        elif isinstance(value, dict):
+            if id(value) in self._dict_mapping:
+                # If the list `value` was already referenced somewhere else
+                value = self._dict_mapping[id(value)]
+            else:
+                # convert the builtin list into a ObservableList
+                value = _ObservableDict(original_dict=value)
+                self._dict_mapping[id(value)] = value
         if isinstance(value, ObservableObject):
             value.add_observer(self, str(attr_name_or_key))
         return value
