@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
-from observable_pattern.observable import Observable
+from observer_pattern.observable import Observable
 
 
 class Observer(ABC):

@@ -1,10 +1,10 @@
 import logging
 from typing import Any
 
-import observable_pattern
-import observable_pattern.observable_object
+import observer_pattern
+import observer_pattern.observable_object
 import pytest
-from observable_pattern.observer import Observer
+from observer_pattern.observer import Observer
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +15,7 @@ class MyObserver(Observer):
 
 
 def test_simple_instance_list_attribute(caplog: pytest.LogCaptureFixture) -> None:
-    class MyObservable(observable_pattern.Observable):
+    class MyObservable(observer_pattern.Observable):
         def __init__(self) -> None:
             super().__init__()
             self.list_attr = [1, 2]
@@ -28,12 +28,12 @@ def test_simple_instance_list_attribute(caplog: pytest.LogCaptureFixture) -> Non
 
 
 def test_instance_object_list_attribute(caplog: pytest.LogCaptureFixture) -> None:
-    class NestedObservable(observable_pattern.Observable):
+    class NestedObservable(observer_pattern.Observable):
         def __init__(self) -> None:
             super().__init__()
             self.name = "Hello"
 
-    class MyObservable(observable_pattern.Observable):
+    class MyObservable(observer_pattern.Observable):
         def __init__(self) -> None:
             super().__init__()
             self.list_attr = [NestedObservable()]
@@ -46,7 +46,7 @@ def test_instance_object_list_attribute(caplog: pytest.LogCaptureFixture) -> Non
 
 
 def test_simple_class_list_attribute(caplog: pytest.LogCaptureFixture) -> None:
-    class MyObservable(observable_pattern.Observable):
+    class MyObservable(observer_pattern.Observable):
         list_attr = [1, 2]
 
     instance = MyObservable()
@@ -57,10 +57,10 @@ def test_simple_class_list_attribute(caplog: pytest.LogCaptureFixture) -> None:
 
 
 def test_class_object_list_attribute(caplog: pytest.LogCaptureFixture) -> None:
-    class NestedObservable(observable_pattern.Observable):
+    class NestedObservable(observer_pattern.Observable):
         name = "Hello"
 
-    class MyObservable(observable_pattern.Observable):
+    class MyObservable(observer_pattern.Observable):
         list_attr = [NestedObservable()]
 
     instance = MyObservable()
@@ -71,7 +71,7 @@ def test_class_object_list_attribute(caplog: pytest.LogCaptureFixture) -> None:
 
 
 def test_simple_instance_dict_attribute(caplog: pytest.LogCaptureFixture) -> None:
-    class MyObservable(observable_pattern.Observable):
+    class MyObservable(observer_pattern.Observable):
         def __init__(self) -> None:
             super().__init__()
             self.dict_attr = {"first": "Hello"}
@@ -86,7 +86,7 @@ def test_simple_instance_dict_attribute(caplog: pytest.LogCaptureFixture) -> Non
 
 
 def test_simple_class_dict_attribute(caplog: pytest.LogCaptureFixture) -> None:
-    class MyObservable(observable_pattern.Observable):
+    class MyObservable(observer_pattern.Observable):
         dict_attr = {"first": "Hello"}
 
     instance = MyObservable()
@@ -99,12 +99,12 @@ def test_simple_class_dict_attribute(caplog: pytest.LogCaptureFixture) -> None:
 
 
 def test_instance_dict_attribute(caplog: pytest.LogCaptureFixture) -> None:
-    class NestedObservable(observable_pattern.Observable):
+    class NestedObservable(observer_pattern.Observable):
         def __init__(self) -> None:
             super().__init__()
             self.name = "Hello"
 
-    class MyObservable(observable_pattern.Observable):
+    class MyObservable(observer_pattern.Observable):
         def __init__(self) -> None:
             super().__init__()
             self.dict_attr = {"first": NestedObservable()}
@@ -117,10 +117,10 @@ def test_instance_dict_attribute(caplog: pytest.LogCaptureFixture) -> None:
 
 
 def test_class_dict_attribute(caplog: pytest.LogCaptureFixture) -> None:
-    class NestedObservable(observable_pattern.Observable):
+    class NestedObservable(observer_pattern.Observable):
         name = "Hello"
 
-    class MyObservable(observable_pattern.Observable):
+    class MyObservable(observer_pattern.Observable):
         dict_attr = {"first": NestedObservable()}
 
     instance = MyObservable()
@@ -131,12 +131,12 @@ def test_class_dict_attribute(caplog: pytest.LogCaptureFixture) -> None:
 
 
 def test_removed_observer_on_class_list_attr(caplog: pytest.LogCaptureFixture) -> None:
-    class NestedObservable(observable_pattern.Observable):
+    class NestedObservable(observer_pattern.Observable):
         name = "Hello"
 
     nested_instance = NestedObservable()
 
-    class MyObservable(observable_pattern.Observable):
+    class MyObservable(observer_pattern.Observable):
         nested_attr = nested_instance
         changed_list_attr = [nested_instance]
 
@@ -156,14 +156,14 @@ def test_removed_observer_on_class_list_attr(caplog: pytest.LogCaptureFixture) -
 def test_removed_observer_on_instance_dict_attr(
     caplog: pytest.LogCaptureFixture,
 ) -> None:
-    class NestedObservable(observable_pattern.Observable):
+    class NestedObservable(observer_pattern.Observable):
         def __init__(self) -> None:
             super().__init__()
             self.name = "Hello"
 
     nested_instance = NestedObservable()
 
-    class MyObservable(observable_pattern.Observable):
+    class MyObservable(observer_pattern.Observable):
         def __init__(self) -> None:
             super().__init__()
             self.nested_attr = nested_instance
@@ -185,14 +185,14 @@ def test_removed_observer_on_instance_dict_attr(
 def test_removed_observer_on_instance_list_attr(
     caplog: pytest.LogCaptureFixture,
 ) -> None:
-    class NestedObservable(observable_pattern.Observable):
+    class NestedObservable(observer_pattern.Observable):
         def __init__(self) -> None:
             super().__init__()
             self.name = "Hello"
 
     nested_instance = NestedObservable()
 
-    class MyObservable(observable_pattern.Observable):
+    class MyObservable(observer_pattern.Observable):
         def __init__(self) -> None:
             super().__init__()
             self.nested_attr = nested_instance
@@ -212,14 +212,14 @@ def test_removed_observer_on_instance_list_attr(
 
 
 def test_removed_observer_on_class_dict_attr(caplog: pytest.LogCaptureFixture) -> None:
-    class NestedObservable(observable_pattern.Observable):
+    class NestedObservable(observer_pattern.Observable):
         def __init__(self) -> None:
             super().__init__()
             self.name = "Hello"
 
     nested_instance = NestedObservable()
 
-    class MyObservable(observable_pattern.Observable):
+    class MyObservable(observer_pattern.Observable):
         def __init__(self) -> None:
             super().__init__()
             self.nested_attr = nested_instance
@@ -241,7 +241,7 @@ def test_removed_observer_on_class_dict_attr(caplog: pytest.LogCaptureFixture) -
 def test_nested_dict_instances(caplog: pytest.LogCaptureFixture) -> None:
     dict_instance = {"first": "Hello", "second": "World"}
 
-    class MyObservable(observable_pattern.Observable):
+    class MyObservable(observer_pattern.Observable):
         def __init__(self) -> None:
             super().__init__()
             self.nested_dict_attr = {"nested": dict_instance}
@@ -258,7 +258,7 @@ def test_nested_dict_instances(caplog: pytest.LogCaptureFixture) -> None:
 def test_dict_in_list_instance(caplog: pytest.LogCaptureFixture) -> None:
     dict_instance = {"first": "Hello", "second": "World"}
 
-    class MyObservable(observable_pattern.Observable):
+    class MyObservable(observer_pattern.Observable):
         def __init__(self) -> None:
             super().__init__()
             self.dict_in_list = [dict_instance]
@@ -273,7 +273,7 @@ def test_dict_in_list_instance(caplog: pytest.LogCaptureFixture) -> None:
 def test_list_in_dict_instance(caplog: pytest.LogCaptureFixture) -> None:
     list_instance = [1, 2, 3]
 
-    class MyObservable(observable_pattern.Observable):
+    class MyObservable(observer_pattern.Observable):
         def __init__(self) -> None:
             super().__init__()
             self.list_in_dict = {"some_list": list_instance}

@@ -1,7 +1,7 @@
 import logging
 from typing import Any
 
-from observable_pattern.observable_object import ObservableObject
+from observer_pattern.observable_object import ObservableObject
 
 logger = logging.getLogger(__name__)
 

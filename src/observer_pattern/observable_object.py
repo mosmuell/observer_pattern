@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any, ClassVar
 
 if TYPE_CHECKING:
-    from observable_pattern.observer.observer import Observer
+    from observer_pattern.observer.observer import Observer
 
 logger = logging.getLogger(__name__)
 

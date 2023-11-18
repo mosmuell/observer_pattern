@@ -1,10 +1,10 @@
 import logging
 from typing import Any
 
-import observable_pattern
-import observable_pattern.observable_object
+import observer_pattern
+import observer_pattern.observable_object
 import pytest
-from observable_pattern.observer import Observer
+from observer_pattern.observer import Observer
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +15,7 @@ class MyObserver(Observer):
 
 
 def test_simple_class_attribute(caplog: pytest.LogCaptureFixture) -> None:
-    class MyObservable(observable_pattern.Observable):
+    class MyObservable(observer_pattern.Observable):
         int_attribute = 10
 
     instance = MyObservable()
@@ -26,7 +26,7 @@ def test_simple_class_attribute(caplog: pytest.LogCaptureFixture) -> None:
 
 
 def test_simple_instance_attribute(caplog: pytest.LogCaptureFixture) -> None:
-    class MyObservable(observable_pattern.Observable):
+    class MyObservable(observer_pattern.Observable):
         def __init__(self) -> None:
             super().__init__()
             self.int_attribute = 10
@@ -39,10 +39,10 @@ def test_simple_instance_attribute(caplog: pytest.LogCaptureFixture) -> None:
 
 
 def test_nested_class_attribute(caplog: pytest.LogCaptureFixture) -> None:
-    class MySubclass(observable_pattern.Observable):
+    class MySubclass(observer_pattern.Observable):
         name = "My Subclass"
 
-    class MyObservable(observable_pattern.Observable):
+    class MyObservable(observer_pattern.Observable):
         subclass = MySubclass()
 
     instance = MyObservable()
@@ -53,12 +53,12 @@ def test_nested_class_attribute(caplog: pytest.LogCaptureFixture) -> None:
 
 
 def test_nested_instance_attribute(caplog: pytest.LogCaptureFixture) -> None:
-    class MySubclass(observable_pattern.Observable):
+    class MySubclass(observer_pattern.Observable):
         def __init__(self) -> None:
             super().__init__()
             self.name = "Subclass name"
 
-    class MyObservable(observable_pattern.Observable):
+    class MyObservable(observer_pattern.Observable):
         def __init__(self) -> None:
             super().__init__()
             self.subclass = MySubclass()
@@ -71,12 +71,12 @@ def test_nested_instance_attribute(caplog: pytest.LogCaptureFixture) -> None:
 
 
 def test_removed_observer_on_class_attr(caplog: pytest.LogCaptureFixture) -> None:
-    class NestedObservable(observable_pattern.Observable):
+    class NestedObservable(observer_pattern.Observable):
         name = "Hello"
 
     nested_instance = NestedObservable()
 
-    class MyObservable(observable_pattern.Observable):
+    class MyObservable(observer_pattern.Observable):
         nested_attr = nested_instance
         changed_attr = nested_instance
 
@@ -94,14 +94,14 @@ def test_removed_observer_on_class_attr(caplog: pytest.LogCaptureFixture) -> Non
 
 
 def test_removed_observer_on_instance_attr(caplog: pytest.LogCaptureFixture) -> None:
-    class NestedObservable(observable_pattern.Observable):
+    class NestedObservable(observer_pattern.Observable):
         def __init__(self) -> None:
             super().__init__()
             self.name = "Hello"
 
     nested_instance = NestedObservable()
 
-    class MyObservable(observable_pattern.Observable):
+    class MyObservable(observer_pattern.Observable):
         def __init__(self) -> None:
             super().__init__()
             self.nested_attr = nested_instance

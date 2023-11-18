@@ -1,12 +1,12 @@
 from typing import Any
 
-import observable_pattern.observer
+import observer_pattern.observer
 import pytest
-from observable_pattern.observable import Observable
+from observer_pattern.observable import Observable
 
 
 def test_abstract_method_error() -> None:
-    class MyObserver(observable_pattern.observer.Observer):
+    class MyObserver(observer_pattern.observer.Observer):
         pass
 
     class MyObservable(Observable):
@@ -17,7 +17,7 @@ def test_abstract_method_error() -> None:
 
 
 def test_constructor_error() -> None:
-    class MyObserver(observable_pattern.observer.Observer):
+    class MyObserver(observer_pattern.observer.Observer):
         def on_change(self, full_access_path: str, value: Any) -> None:
             pass
 
