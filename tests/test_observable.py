@@ -19,7 +19,7 @@ def test_simple_class_attribute(caplog: pytest.LogCaptureFixture) -> None:
         int_attribute = 10
 
     instance = MyObservable()
-    instance.add_observer(MyObserver())
+    observer = MyObserver(instance)
     instance.int_attribute = 12
 
     assert "'int_attribute' changed to '12'" in caplog.text  # noqa: S101
@@ -32,7 +32,7 @@ def test_simple_instance_attribute(caplog: pytest.LogCaptureFixture) -> None:
             self.int_attribute = 10
 
     instance = MyObservable()
-    instance.add_observer(MyObserver())
+    observer = MyObserver(instance)
     instance.int_attribute = 12
 
     assert "'int_attribute' changed to '12'" in caplog.text  # noqa: S101
@@ -46,7 +46,7 @@ def test_nested_class_attribute(caplog: pytest.LogCaptureFixture) -> None:
         subclass = MySubclass()
 
     instance = MyObservable()
-    instance.add_observer(MyObserver())
+    observer = MyObserver(instance)
     instance.subclass.name = "Other name"
 
     assert "'subclass.name' changed to 'Other name'" in caplog.text  # noqa: S101
@@ -64,7 +64,7 @@ def test_nested_instance_attribute(caplog: pytest.LogCaptureFixture) -> None:
             self.subclass = MySubclass()
 
     instance = MyObservable()
-    instance.add_observer(MyObserver())
+    observer = MyObserver(instance)
     instance.subclass.name = "Other name"
 
     assert "'subclass.name' changed to 'Other name'" in caplog.text  # noqa: S101
@@ -81,7 +81,7 @@ def test_removed_observer_on_class_attr(caplog: pytest.LogCaptureFixture) -> Non
         changed_attr = nested_instance
 
     instance = MyObservable()
-    instance.add_observer(MyObserver())
+    observer = MyObserver(instance)
     instance.changed_attr = "Ciao"
 
     assert "'changed_attr' changed to 'Ciao'" in caplog.text  # noqa: S101
@@ -108,7 +108,7 @@ def test_removed_observer_on_instance_attr(caplog: pytest.LogCaptureFixture) -> 
             self.changed_attr = nested_instance
 
     instance = MyObservable()
-    instance.add_observer(MyObserver())
+    observer = MyObserver(instance)
     instance.changed_attr = "Ciao"
 
     assert "'changed_attr' changed to 'Ciao'" in caplog.text  # noqa: S101
