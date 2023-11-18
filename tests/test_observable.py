@@ -68,3 +68,53 @@ def test_nested_instance_attribute(caplog: pytest.LogCaptureFixture) -> None:
     instance.subclass.name = "Other name"
 
     assert "'subclass.name' changed to 'Other name'" in caplog.text  # noqa: S101
+
+
+def test_removed_observer_on_class_attr(caplog: pytest.LogCaptureFixture) -> None:
+    class NestedObservable(observable_pattern.Observable):
+        name = "Hello"
+
+    nested_instance = NestedObservable()
+
+    class MyObservable(observable_pattern.Observable):
+        nested_attr = nested_instance
+        changed_attr = nested_instance
+
+    instance = MyObservable()
+    instance.add_observer(MyObserver())
+    instance.changed_attr = "Ciao"
+
+    assert "'changed_attr' changed to 'Ciao'" in caplog.text  # noqa: S101
+    caplog.clear()
+
+    instance.nested_attr.name = "Hi"
+
+    assert "'nested_attr.name' changed to 'Hi'" in caplog.text
+    assert "'changed_attr.name' changed to 'Hi'" not in caplog.text
+
+
+def test_removed_observer_on_instance_attr(caplog: pytest.LogCaptureFixture) -> None:
+    class NestedObservable(observable_pattern.Observable):
+        def __init__(self) -> None:
+            super().__init__()
+            self.name = "Hello"
+
+    nested_instance = NestedObservable()
+
+    class MyObservable(observable_pattern.Observable):
+        def __init__(self) -> None:
+            super().__init__()
+            self.nested_attr = nested_instance
+            self.changed_attr = nested_instance
+
+    instance = MyObservable()
+    instance.add_observer(MyObserver())
+    instance.changed_attr = "Ciao"
+
+    assert "'changed_attr' changed to 'Ciao'" in caplog.text  # noqa: S101
+    caplog.clear()
+
+    instance.nested_attr.name = "Hi"
+
+    assert "'nested_attr.name' changed to 'Hi'" in caplog.text
+    assert "'changed_attr.name' changed to 'Hi'" not in caplog.text
