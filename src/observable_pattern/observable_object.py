@@ -64,7 +64,7 @@ class _ObservableList(list, ObservableObject):
         ObservableObject.__init__(self)
         list.__init__(self, self._original_list)
         for i, item in enumerate(self._original_list):
-            self[i] = self._initialise_new_objects(i, item)
+            super().__setitem__(i, self._initialise_new_objects(i, item))
 
     def __setitem__(self, key: int, value: Any) -> None:  # type: ignore[override]
         if hasattr(self, "_observers"):
@@ -104,7 +104,7 @@ class _ObservableDict(dict, ObservableObject):
         ObservableObject.__init__(self)
         dict.__init__(self)
         for key, value in self._original_dict.items():
-            self[key] = self._initialise_new_objects(key, value)
+            super().__setitem__(key, self._initialise_new_objects(key, value))
 
     def __setitem__(self, key: Any, value: Any) -> None:  # type: ignore[override]
         if not isinstance(key, str):
