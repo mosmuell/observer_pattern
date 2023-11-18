@@ -253,3 +253,35 @@ def test_nested_dict_instances(caplog: pytest.LogCaptureFixture) -> None:
     assert (  # noqa: S101
         "'nested_dict_attr['nested']['first']' changed to 'Ciao'" in caplog.text
     )
+
+
+def test_dict_in_list_instance(caplog: pytest.LogCaptureFixture) -> None:
+    dict_instance = {"first": "Hello", "second": "World"}
+
+    class MyObservable(observable_pattern.Observable):
+        def __init__(self) -> None:
+            super().__init__()
+            self.dict_in_list = [dict_instance]
+
+    instance = MyObservable()
+    observer = MyObserver(instance)
+    instance.dict_in_list[0]["first"] = "Ciao"
+
+    assert "'dict_in_list[0]['first']' changed to 'Ciao'" in caplog.text  # noqa: S101
+
+
+def test_list_in_dict_instance(caplog: pytest.LogCaptureFixture) -> None:
+    list_instance = [1, 2, 3]
+
+    class MyObservable(observable_pattern.Observable):
+        def __init__(self) -> None:
+            super().__init__()
+            self.list_in_dict = {"some_list": list_instance}
+
+    instance = MyObservable()
+    observer = MyObserver(instance)
+    instance.list_in_dict["some_list"][0] = "Ciao"
+
+    assert (  # noqa: S101
+        "'list_in_dict['some_list'][0]' changed to 'Ciao'" in caplog.text
+    )
