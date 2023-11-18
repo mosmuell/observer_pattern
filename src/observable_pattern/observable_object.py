@@ -12,24 +12,22 @@ class ObservableObject(ABC):
     def __init__(self) -> None:
         self._observers: dict[str | None, list["ObservableObject"]] = {}
 
-    def add_observer(
-        self, observer: "ObservableObject", attr_or_item: str = ""
-    ) -> None:
-        if attr_or_item not in self._observers:
-            self._observers[attr_or_item] = []
-        if observer not in self._observers[attr_or_item]:
-            self._observers[attr_or_item].append(observer)
+    def add_observer(self, observer: "ObservableObject", attr_name: str = "") -> None:
+        if attr_name not in self._observers:
+            self._observers[attr_name] = []
+        if observer not in self._observers[attr_name]:
+            self._observers[attr_name].append(observer)
 
     def _remove_observer(self, observer: "ObservableObject", attribute: str) -> None:
         if attribute in self._observers:
             self._observers[attribute].remove(observer)
 
     @abstractmethod
-    def _remove_observer_if_observable(self, name: Any) -> None:
+    def _remove_observer_if_observable(self, name: str) -> None:
         ...
 
     @abstractmethod
-    def _notify_observers(self, changed_attribute: Any, value: Any) -> None:
+    def _notify_observers(self, changed_attribute: str, value: Any) -> None:
         ...
 
     def _initialise_new_objects(self, attr_name_or_key: Any, value: Any) -> Any:
@@ -55,7 +53,7 @@ class ObservableObject(ABC):
         return new_value
 
 
-class _ObservableList(list, ObservableObject):
+class _ObservableList(ObservableObject, list):
     def __init__(
         self,
         original_list: list[Any],
@@ -74,7 +72,7 @@ class _ObservableList(list, ObservableObject):
 
         super().__setitem__(key, value)
 
-    def _notify_observers(self, changed_attribute: Any, value: Any) -> None:
+    def _notify_observers(self, changed_attribute: str, value: Any) -> None:
         changed_attribute = str(changed_attribute)
         for attr_name, observer_list in self._observers.items():
             for observer in observer_list:
@@ -83,7 +81,7 @@ class _ObservableList(list, ObservableObject):
                     extendend_attr_path = f"{attr_name}{extendend_attr_path}"
                 observer._notify_observers(extendend_attr_path, value)
 
-    def _remove_observer_if_observable(self, name: Any) -> None:
+    def _remove_observer_if_observable(self, name: str) -> None:
         key = int(name[1:-1])
         current_value = self.__getitem__(key)
 
@@ -103,7 +101,7 @@ class _ObservableDict(dict, ObservableObject):
         for key, value in self._original_dict.items():
             super().__setitem__(key, self._initialise_new_objects(f"['{key}']", value))
 
-    def __setitem__(self, key: Any, value: Any) -> None:  # type: ignore[override]
+    def __setitem__(self, key: str, value: Any) -> None:  # type: ignore[override]
         if not isinstance(key, str):
             logger.warning(
                 "Dictionary key %s is not a string. Trying to convert to string...", key
@@ -117,7 +115,7 @@ class _ObservableDict(dict, ObservableObject):
 
         super().__setitem__(key, value)
 
-    def _notify_observers(self, changed_attribute: Any, value: Any) -> None:
+    def _notify_observers(self, changed_attribute: str, value: Any) -> None:
         changed_attribute = str(changed_attribute)
         for attr_name, observer_list in self._observers.items():
             for observer in observer_list:

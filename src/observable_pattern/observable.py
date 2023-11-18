@@ -26,7 +26,7 @@ class Observable(ObservableObject):
 
         super().__setattr__(name, value)
 
-    def _notify_observers(self, changed_attribute: Any, value: Any) -> None:
+    def _notify_observers(self, changed_attribute: str, value: Any) -> None:
         for attr_name, observer_list in self._observers.items():
             for observer in observer_list:
                 extendend_attr_path = changed_attribute
@@ -34,7 +34,7 @@ class Observable(ObservableObject):
                     extendend_attr_path = f"{attr_name}.{changed_attribute}"
                 observer._notify_observers(extendend_attr_path, value)
 
-    def _remove_observer_if_observable(self, name: Any) -> None:
+    def _remove_observer_if_observable(self, name: str) -> None:
         current_value = getattr(self, name, None)
 
         if isinstance(current_value, ObservableObject):
