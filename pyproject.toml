@@ -1,0 +1,78 @@
+[tool.poetry]
+name = "observable-pattern"
+version = "0.1.0"
+description = ""
+authors = ["Mose Mueller <mosmuell@ethz.ch>"]
+readme = "README.md"
+packages = [{include = "observable_pattern", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+click = "^8.1.7"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.3"
+pytest-mock = "^3.11.1"
+pyright = "^1.1.323"
+ruff = "^0.1.5"
+mypy = "^1.7.0"
+black = "^23.11.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+# unfixable = [
+#   "ERA001", # Disable fix for commented out code
+# ]
+target-version = "py310" # Always generate Python 3.10-compatible code
+line-length = 88
+select = ["ALL"]
+ignore = [
+    "ANN101",  # typing self
+    "ANN401",  # disallow Any typing 
+    "E501",
+    "F403",
+    "F405",
+    "E203",
+    "COM812", # Missing trailing comma rule; defer to Black for formatting
+    "B904", # Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+    "D", # pydocstyle
+    "UP007", # Use `X | Y` for type annotations
+    "TRY", # Exception Handling AntiPatterns in Python
+    "EM", # flake8 error messages
+    "SLF", # flake8-self
+    "ISC001",
+  # "FBT",    # Boolean trap detection
+  # "A",      # Check for python builtins being used as variables or parameters
+]
+extend-exclude = [
+  "docs", "frontend", "tests"
+]
+
+[tool.mypy]
+mypy_path = "src/"
+show_error_codes = true
+disallow_untyped_defs = true
+disallow_untyped_calls = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+ignore_missing_imports = false
+
+[tool.black]
+line-length = 88
+exclude = '''
+/(
+    \.git
+  | \.mypy_cache
+  | \.tox
+  | venv
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
