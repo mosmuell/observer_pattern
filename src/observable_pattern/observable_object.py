@@ -47,14 +47,14 @@ class ObservableObject:
                 # convert the builtin list into a ObservableList
                 value = _ObservableList(original_list=value)
                 self._list_mapping[id(value)] = value
-        elif isinstance(value, dict):
-            if id(value) in self._dict_mapping:
-                # If the list `value` was already referenced somewhere else
-                value = self._dict_mapping[id(value)]
-            else:
-                # convert the builtin list into a ObservableList
-                value = _ObservableDict(original_dict=value)
-                self._dict_mapping[id(value)] = value
+        # elif isinstance(value, dict):
+        #     if id(value) in self._dict_mapping:
+        #         # If the list `value` was already referenced somewhere else
+        #         value = self._dict_mapping[id(value)]
+        #     else:
+        #         # convert the builtin list into a ObservableList
+        #         value = _ObservableDict(original_dict=value)
+        #         self._dict_mapping[id(value)] = value
         if isinstance(value, ObservableObject):
             value.add_observer(self, str(attr_name_or_key))
         return value
@@ -65,18 +65,21 @@ class _ObservableList(list, ObservableObject):
         self,
         original_list: list[Any],
     ) -> None:
-        self._original_list = original_list
         ObservableObject.__init__(self)
+        self._original_list = original_list
         list.__init__(self, self._original_list)
         for i, item in enumerate(self._original_list):
-            self[i] = item
+            self[i] = self.initialise_new_objects(i, item)
 
     def __setitem__(self, key: int, value: Any) -> None:  # type: ignore[override]
-        if hasattr(self, "_observers"):
-            self.remove_observer_if_observable(key)
-            self.notify_observers(key, value)
-            value = self.initialise_new_objects(key, value)
+        self.remove_observer_if_observable(key)
+
+        value = self.initialise_new_objects(key, value)
+
         super().__setitem__(key, value)
+
+        if hasattr(self, "_observers"):
+            self.notify_observers(key, value)
 
     def notify_observers(self, changed_attribute: Any, value: Any) -> None:
         changed_attribute = str(changed_attribute)

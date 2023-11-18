@@ -9,9 +9,11 @@ logger = logging.getLogger(__name__)
 
 class Observable(ObservableObject, ObservableMeta):
     def __setattr__(self, name: str, value: Any) -> None:
+        self.remove_observer_if_observable(name)
+
+        value = self.initialise_new_objects(name, value)
+
         if hasattr(self, "_observers"):
             self.notify_observers(name, value)
-            self.remove_observer_if_observable(name)
-            value = self.initialise_new_objects(name, value)
 
         super().__setattr__(name, value)
