@@ -1,6 +1,9 @@
 import logging
 from abc import ABC, abstractmethod
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
+
+if TYPE_CHECKING:
+    from observable_pattern.observer.observer import Observer
 
 logger = logging.getLogger(__name__)
 
@@ -12,7 +15,9 @@ class ObservableObject(ABC):
     def __init__(self) -> None:
         self._observers: dict[str | None, list["ObservableObject"]] = {}
 
-    def add_observer(self, observer: "ObservableObject", attr_name: str = "") -> None:
+    def add_observer(
+        self, observer: "ObservableObject | Observer", attr_name: str = ""
+    ) -> None:
         if attr_name not in self._observers:
             self._observers[attr_name] = []
         if observer not in self._observers[attr_name]:
