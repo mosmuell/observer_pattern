@@ -18,7 +18,8 @@ class ObservableObject:
     ) -> None:
         if attr_or_item not in self._observers:
             self._observers[attr_or_item] = []
-        self._observers[attr_or_item].append(observer)
+        if observer not in self._observers[attr_or_item]:
+            self._observers[attr_or_item].append(observer)
 
     def remove_observer(self, observer: "ObservableObject", attribute: str) -> None:
         if attribute in self._observers:
