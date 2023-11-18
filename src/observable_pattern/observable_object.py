@@ -65,21 +65,19 @@ class _ObservableList(list, ObservableObject):
         self,
         original_list: list[Any],
     ) -> None:
-        ObservableObject.__init__(self)
         self._original_list = original_list
+        ObservableObject.__init__(self)
         list.__init__(self, self._original_list)
         for i, item in enumerate(self._original_list):
             self[i] = self.initialise_new_objects(i, item)
 
     def __setitem__(self, key: int, value: Any) -> None:  # type: ignore[override]
-        self.remove_observer_if_observable(key)
-
-        value = self.initialise_new_objects(key, value)
+        if hasattr(self, "_observers"):
+            self.remove_observer_if_observable(key)
+            value = self.initialise_new_objects(key, value)
+            self.notify_observers(key, value)
 
         super().__setitem__(key, value)
-
-        if hasattr(self, "_observers"):
-            self.notify_observers(key, value)
 
     def notify_observers(self, changed_attribute: Any, value: Any) -> None:
         changed_attribute = str(changed_attribute)
@@ -121,14 +119,13 @@ class _ObservableDict(dict, ObservableObject):
                 "Dictionary key %s is not a string. Trying to convert to string...", key
             )
             key = str(key)
-        self.remove_observer_if_observable(key)
-
-        value = self.initialise_new_objects(key, value)
-
-        super().__setitem__(key, value)
 
         if hasattr(self, "_observers"):
+            self.remove_observer_if_observable(key)
+            value = self.initialise_new_objects(key, value)
             self.notify_observers(key, value)
+
+        super().__setitem__(key, value)
 
     def notify_observers(self, changed_attribute: Any, value: Any) -> None:
         changed_attribute = str(changed_attribute)
