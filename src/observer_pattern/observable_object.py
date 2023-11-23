@@ -29,10 +29,24 @@ class ObservableObject(ABC):
 
     @abstractmethod
     def _remove_observer_if_observable(self, name: str) -> None:
+        """Removes the current object as an observer from an observable attribute.
+
+        This method is called before an attribute of the observable object is
+        changed. If the current value of the attribute is an instance of
+        `ObservableObject`, this method removes the current object from its list
+        of observers. This is a crucial step to avoid unwanted notifications from
+        the old value of the attribute.
+        """
         ...
 
     @abstractmethod
     def _notify_observers(self, changed_attribute: str, value: Any) -> None:
+        """Notifies all observers about changes to an attribute.
+
+        This method iterates through all observers registered for the object and
+        invokes their notification method. It is called whenever an attribute of
+        the observable object is changed.
+        """
         ...
 
     def _initialise_new_objects(self, attr_name_or_key: Any, value: Any) -> Any:
