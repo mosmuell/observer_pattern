@@ -33,7 +33,6 @@ select = ["ALL"]
 ignore = [
     "ANN101",  # typing self
     "ANN401",  # disallow Any typing 
-    "E501",
     "F403",
     "F405",
     "E203",
