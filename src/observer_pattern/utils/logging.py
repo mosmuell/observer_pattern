@@ -113,7 +113,10 @@ def setup_logging(level: str | int = logging.INFO) -> None:
     # add formatter to ch
     ch.setFormatter(
         ColourizedFormatter(
-            fmt="%(asctime)s.%(msecs)03d | %(levelprefix)s | %(name)s:%(funcName)s:%(lineno)d - %(message)s",
+            fmt=(
+                "%(asctime)s.%(msecs)03d | %(levelprefix)s | "
+                "%(name)s:%(funcName)s:%(lineno)d - %(message)s"
+            ),
             datefmt="%Y-%m-%d %H:%M:%S",
         )
     )
