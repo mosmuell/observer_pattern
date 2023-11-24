@@ -118,3 +118,21 @@ def test_removed_observer_on_instance_attr(caplog: pytest.LogCaptureFixture) -> 
 
     assert "'nested_attr.name' changed to 'Hi'" in caplog.text  # noqa: S101
     assert "'changed_attr.name' changed to 'Hi'" not in caplog.text  # noqa: S101
+
+
+def test_property_getter(caplog: pytest.LogCaptureFixture) -> None:
+    class MyObservable(observer_pattern.Observable):
+        def __init__(self) -> None:
+            super().__init__()
+            self._name = "Hello"
+
+        @property
+        def name(self) -> str:
+            """The name property."""
+            return self._name
+
+    instance = MyObservable()
+    observer = MyObserver(instance)
+    _ = instance.name
+
+    assert "'name' changed to 'Hello'" in caplog.text  # noqa: S101

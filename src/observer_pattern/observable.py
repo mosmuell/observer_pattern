@@ -28,6 +28,13 @@ class Observable(ObservableObject):
 
         super().__setattr__(name, value)
 
+    def __getattribute__(self, name: str) -> Any:
+        value = super().__getattribute__(name)
+        if isinstance(getattr(type(self), name, None), property):
+            self._notify_observers(name, value)
+
+        return value
+
     def _notify_observers(self, changed_attribute: str, value: Any) -> None:
         for attr_name, observer_list in self._observers.items():
             for observer in observer_list:
