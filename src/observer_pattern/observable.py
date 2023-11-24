@@ -16,6 +16,8 @@ class Observable(ObservableObject):
             - set(self.__dict__)
         }
         for name, value in class_attrs.items():
+            if isinstance(value, property) or callable(value):
+                continue
             self.__dict__[name] = self._initialise_new_objects(name, value)
 
     def __setattr__(self, name: str, value: Any) -> None:
