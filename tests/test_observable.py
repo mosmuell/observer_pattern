@@ -89,8 +89,8 @@ def test_removed_observer_on_class_attr(caplog: pytest.LogCaptureFixture) -> Non
 
     instance.nested_attr.name = "Hi"
 
-    assert "'nested_attr.name' changed to 'Hi'" in caplog.text
-    assert "'changed_attr.name' changed to 'Hi'" not in caplog.text
+    assert "'nested_attr.name' changed to 'Hi'" in caplog.text  # noqa: S101
+    assert "'changed_attr.name' changed to 'Hi'" not in caplog.text  # noqa: S101
 
 
 def test_removed_observer_on_instance_attr(caplog: pytest.LogCaptureFixture) -> None:
@@ -116,5 +116,5 @@ def test_removed_observer_on_instance_attr(caplog: pytest.LogCaptureFixture) -> 
 
     instance.nested_attr.name = "Hi"
 
-    assert "'nested_attr.name' changed to 'Hi'" in caplog.text
-    assert "'changed_attr.name' changed to 'Hi'" not in caplog.text
+    assert "'nested_attr.name' changed to 'Hi'" in caplog.text  # noqa: S101
+    assert "'changed_attr.name' changed to 'Hi'" not in caplog.text  # noqa: S101

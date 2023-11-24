@@ -178,7 +178,7 @@ def test_removed_observer_on_instance_dict_attr(
 
     instance.nested_attr.name = "Hi"
 
-    assert "'nested_attr.name' changed to 'Hi'" in caplog.text
+    assert "'nested_attr.name' changed to 'Hi'" in caplog.text  # noqa: S101
     assert "'changed_dict_attr['nested'].name' changed to 'Hi'" not in caplog.text
 
 
@@ -207,7 +207,7 @@ def test_removed_observer_on_instance_list_attr(
 
     instance.nested_attr.name = "Hi"
 
-    assert "'nested_attr.name' changed to 'Hi'" in caplog.text
+    assert "'nested_attr.name' changed to 'Hi'" in caplog.text  # noqa: S101
     assert "'changed_list_attr[0].name' changed to 'Hi'" not in caplog.text
 
 
@@ -234,8 +234,10 @@ def test_removed_observer_on_class_dict_attr(caplog: pytest.LogCaptureFixture) -
 
     instance.nested_attr.name = "Hi"
 
-    assert "'nested_attr.name' changed to 'Hi'" in caplog.text
-    assert "'changed_dict_attr['nested'].name' changed to 'Hi'" not in caplog.text
+    assert "'nested_attr.name' changed to 'Hi'" in caplog.text  # noqa: S101
+    assert (  # noqa: S101
+        "'changed_dict_attr['nested'].name' changed to 'Hi'" not in caplog.text
+    )
 
 
 def test_nested_dict_instances(caplog: pytest.LogCaptureFixture) -> None:
