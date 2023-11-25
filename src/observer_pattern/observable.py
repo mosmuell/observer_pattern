@@ -2,12 +2,9 @@ import logging
 from typing import Any
 
 from observer_pattern.observable_object import ObservableObject
+from observer_pattern.utils.helpers import is_property_attribute
 
 logger = logging.getLogger(__name__)
-
-
-def is_property_attribute(target_obj: Any, attr_name: str) -> bool:
-    return isinstance(getattr(type(target_obj), attr_name, None), property)
 
 
 class Observable(ObservableObject):
