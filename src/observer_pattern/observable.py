@@ -25,9 +25,10 @@ class Observable(ObservableObject):
         if hasattr(self, "_observers"):
             self._remove_observer_if_observable(name)
             value = self._initialise_new_objects(name, value)
-            self._notify_observers(name, value)
 
         super().__setattr__(name, value)
+
+        self._notify_observers(name, value)
 
     def __getattribute__(self, name: str) -> Any:
         value = super().__getattribute__(name)

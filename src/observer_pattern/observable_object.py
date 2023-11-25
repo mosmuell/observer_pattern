@@ -87,9 +87,10 @@ class _ObservableList(ObservableObject, list):
         if hasattr(self, "_observers"):
             self._remove_observer_if_observable(f"[{key}]")
             value = self._initialise_new_objects(f"[{key}]", value)
-            self._notify_observers(f"[{key}]", value)
 
         super().__setitem__(key, value)
+
+        self._notify_observers(f"[{key}]", value)
 
     def _notify_observers(self, changed_attribute: str, value: Any) -> None:
         changed_attribute = str(changed_attribute)
@@ -130,9 +131,10 @@ class _ObservableDict(dict, ObservableObject):
         if hasattr(self, "_observers"):
             self._remove_observer_if_observable(f"['{key}']")
             value = self._initialise_new_objects(key, value)
-            self._notify_observers(f"['{key}']", value)
 
         super().__setitem__(key, value)
+
+        self._notify_observers(f"['{key}']", value)
 
     def _notify_observers(self, changed_attribute: str, value: Any) -> None:
         changed_attribute = str(changed_attribute)
