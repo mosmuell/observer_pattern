@@ -6,6 +6,10 @@ from observer_pattern.observable_object import ObservableObject
 logger = logging.getLogger(__name__)
 
 
+def is_property_attribute(target_obj: Any, attr_name: str) -> bool:
+    return isinstance(getattr(type(target_obj), attr_name, None), property)
+
+
 class Observable(ObservableObject):
     def __init__(self) -> None:
         super().__init__()
@@ -30,7 +34,7 @@ class Observable(ObservableObject):
 
     def __getattribute__(self, name: str) -> Any:
         value = super().__getattribute__(name)
-        if isinstance(getattr(type(self), name, None), property):
+        if is_property_attribute(self, name):
             self._notify_observers(name, value)
 
         return value
