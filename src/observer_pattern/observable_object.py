@@ -162,7 +162,6 @@ class _ObservableList(ObservableObject, list):
         return instance_attr_name
 
 
-# TODO(mosmuell): keys must be strings.. Maybe with a metaclass?
 class _ObservableDict(dict, ObservableObject):
     def __init__(
         self,
