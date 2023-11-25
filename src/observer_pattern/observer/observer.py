@@ -9,7 +9,7 @@ class Observer(ABC):
         self.observable = observable
         self.observable.add_observer(self)
 
-    def _notify_observers(self, changed_attribute: str, value: Any) -> None:
+    def _notify_changed(self, changed_attribute: str, value: Any) -> None:
         self.on_change(full_access_path=changed_attribute, value=value)
 
     @abstractmethod

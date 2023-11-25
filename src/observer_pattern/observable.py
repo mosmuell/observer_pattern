@@ -28,12 +28,12 @@ class Observable(ObservableObject):
 
         super().__setattr__(name, value)
 
-        self._notify_observers(name, value)
+        self._notify_changed(name, value)
 
     def __getattribute__(self, name: str) -> Any:
         value = super().__getattribute__(name)
         if is_property_attribute(self, name):
-            self._notify_observers(name, value)
+            self._notify_changed(name, value)
 
         return value
 

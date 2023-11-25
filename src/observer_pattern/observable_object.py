@@ -39,7 +39,7 @@ class ObservableObject(ABC):
         """
         ...
 
-    def _notify_observers(self, changed_attribute: str, value: Any) -> None:
+    def _notify_changed(self, changed_attribute: str, value: Any) -> None:
         """Notifies all observers about changes to an attribute.
 
         This method iterates through all observers registered for the object and
@@ -55,7 +55,7 @@ class ObservableObject(ABC):
                 extendend_attr_path = self._construct_extended_attr_path(
                     attr_name, changed_attribute
                 )
-                observer._notify_observers(extendend_attr_path, value)
+                observer._notify_changed(extendend_attr_path, value)
 
     def _initialise_new_objects(self, attr_name_or_key: Any, value: Any) -> Any:
         new_value = value
@@ -121,7 +121,7 @@ class _ObservableList(ObservableObject, list):
 
         super().__setitem__(key, value)
 
-        self._notify_observers(f"[{key}]", value)
+        self._notify_changed(f"[{key}]", value)
 
     def _remove_observer_if_observable(self, name: str) -> None:
         key = int(name[1:-1])
@@ -163,7 +163,7 @@ class _ObservableDict(dict, ObservableObject):
 
         super().__setitem__(key, value)
 
-        self._notify_observers(f"['{key}']", value)
+        self._notify_changed(f"['{key}']", value)
 
     def _remove_observer_if_observable(self, name: str) -> None:
         key = name[2:-2]
