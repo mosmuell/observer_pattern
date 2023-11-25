@@ -152,9 +152,7 @@ class _ObservableDict(dict, ObservableObject):
 
     def __setitem__(self, key: str, value: Any) -> None:  # type: ignore[override]
         if not isinstance(key, str):
-            logger.warning(
-                "Dictionary key %s is not a string. Trying to convert to string...", key
-            )
+            logger.warning("Converting non-string dictionary key %s to string.", key)
             key = str(key)
 
         if hasattr(self, "_observers"):
