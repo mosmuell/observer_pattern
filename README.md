@@ -89,3 +89,10 @@ Contributions to the package are welcome. Please follow the standard procedures 
 ## License
 
 This project is licensed under the [MIT](./LICENSE) license.
+
+
+## TODOs
+- [ ] add observer implementation that watches for changes in property dependencies -> triggers on_change
+- [ ] documentation
+  - [ ] mention that calling a property getter will also result in an on_change and on_change_start notification
+    - [ ] you would have to create a local cache to see if the property value has really changed
