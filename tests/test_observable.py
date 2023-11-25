@@ -136,3 +136,25 @@ def test_property_getter(caplog: pytest.LogCaptureFixture) -> None:
     _ = instance.name
 
     assert "'name' changed to 'Hello'" in caplog.text  # noqa: S101
+
+
+def test_property_setter(caplog: pytest.LogCaptureFixture) -> None:
+    class MyObservable(observer_pattern.Observable):
+        def __init__(self) -> None:
+            super().__init__()
+            self._name = "Hello"
+
+        @property
+        def name(self) -> str:
+            return self._name
+
+        @name.setter
+        def name(self, value: str) -> None:
+            self._name = value
+
+    instance = MyObservable()
+    observer = MyObserver(instance)
+    instance.name = "Ciao"
+
+    assert "'name' changed to 'Hello'" not in caplog.text  # noqa: S101
+    assert "'name' changed to 'Ciao'" in caplog.text  # noqa: S101
