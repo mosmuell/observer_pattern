@@ -48,7 +48,8 @@ class Observable(ObservableObject):
                 observer._notify_observers(extendend_attr_path, value)
 
     def _remove_observer_if_observable(self, name: str) -> None:
-        current_value = getattr(self, name, None)
+        if not is_property_attribute(self, name):
+            current_value = getattr(self, name, None)
 
-        if isinstance(current_value, ObservableObject):
-            current_value._remove_observer(self, name)
+            if isinstance(current_value, ObservableObject):
+                current_value._remove_observer(self, name)
