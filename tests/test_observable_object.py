@@ -149,8 +149,10 @@ def test_removed_observer_on_class_list_attr(caplog: pytest.LogCaptureFixture) -
 
     instance.nested_attr.name = "Hi"
 
-    assert "'nested_attr.name' changed to 'Hi'" in caplog.text
-    assert "'changed_list_attr[0].name' changed to 'Hi'" not in caplog.text
+    assert "'nested_attr.name' changed to 'Hi'" in caplog.text  # noqa: S101
+    assert (  # noqa: S101
+        "'changed_list_attr[0].name' changed to 'Hi'" not in caplog.text
+    )
 
 
 def test_removed_observer_on_instance_dict_attr(
@@ -173,13 +175,17 @@ def test_removed_observer_on_instance_dict_attr(
     observer = MyObserver(instance)
     instance.changed_dict_attr["nested"] = "Ciao"
 
-    assert "'changed_dict_attr['nested']' changed to 'Ciao'" in caplog.text
+    assert (  # noqa: S101
+        "'changed_dict_attr['nested']' changed to 'Ciao'" in caplog.text
+    )
     caplog.clear()
 
     instance.nested_attr.name = "Hi"
 
     assert "'nested_attr.name' changed to 'Hi'" in caplog.text  # noqa: S101
-    assert "'changed_dict_attr['nested'].name' changed to 'Hi'" not in caplog.text
+    assert (  # noqa: S101
+        "'changed_dict_attr['nested'].name' changed to 'Hi'" not in caplog.text
+    )
 
 
 def test_removed_observer_on_instance_list_attr(
@@ -208,7 +214,9 @@ def test_removed_observer_on_instance_list_attr(
     instance.nested_attr.name = "Hi"
 
     assert "'nested_attr.name' changed to 'Hi'" in caplog.text  # noqa: S101
-    assert "'changed_list_attr[0].name' changed to 'Hi'" not in caplog.text
+    assert (  # noqa: S101
+        "'changed_list_attr[0].name' changed to 'Hi'" not in caplog.text
+    )
 
 
 def test_removed_observer_on_class_dict_attr(caplog: pytest.LogCaptureFixture) -> None:
@@ -229,7 +237,9 @@ def test_removed_observer_on_class_dict_attr(caplog: pytest.LogCaptureFixture) -
     observer = MyObserver(instance)
     instance.changed_dict_attr["nested"] = "Ciao"
 
-    assert "'changed_dict_attr['nested']' changed to 'Ciao'" in caplog.text
+    assert (  # noqa: S101
+        "'changed_dict_attr['nested']' changed to 'Ciao'" in caplog.text
+    )
     caplog.clear()
 
     instance.nested_attr.name = "Hi"
