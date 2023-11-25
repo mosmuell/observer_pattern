@@ -39,15 +39,23 @@ class ObservableObject(ABC):
         """
         ...
 
-    @abstractmethod
     def _notify_observers(self, changed_attribute: str, value: Any) -> None:
         """Notifies all observers about changes to an attribute.
 
         This method iterates through all observers registered for the object and
         invokes their notification method. It is called whenever an attribute of
         the observable object is changed.
+
+        Args:
+            changed_attribute (str): The name of the changed attribute.
+            value (Any): The value that the attribute was set to.
         """
-        ...
+        for attr_name, observer_list in self._observers.items():
+            for observer in observer_list:
+                extendend_attr_path = self._construct_extended_attr_path(
+                    attr_name, changed_attribute
+                )
+                observer._notify_observers(extendend_attr_path, value)
 
     def _initialise_new_objects(self, attr_name_or_key: Any, value: Any) -> Any:
         new_value = value
@@ -71,6 +79,29 @@ class ObservableObject(ABC):
             new_value.add_observer(self, str(attr_name_or_key))
         return new_value
 
+    @abstractmethod
+    def _construct_extended_attr_path(
+        self, observer_attr_name: str, instance_attr_name: str
+    ) -> str:
+        """
+        Constructs the extended attribute path for notification purposes, which is used
+        in the observer pattern to specify the full path of an observed attribute.
+
+        This abstract method is implemented by the classes inheriting from
+        `ObservableObject`.
+
+        Args:
+            observer_attr_name (str): The name of the attribute in the observer that
+            holds a reference to the instance. Equals `""` if observer itself is of type
+            `Observer`.
+            instance_attr_name (str): The name of the attribute within the instance that
+            has changed.
+
+        Returns:
+            str: The constructed extended attribute path.
+        """
+        ...
+
 
 class _ObservableList(ObservableObject, list):
     def __init__(
@@ -92,21 +123,19 @@ class _ObservableList(ObservableObject, list):
 
         self._notify_observers(f"[{key}]", value)
 
-    def _notify_observers(self, changed_attribute: str, value: Any) -> None:
-        changed_attribute = str(changed_attribute)
-        for attr_name, observer_list in self._observers.items():
-            for observer in observer_list:
-                extendend_attr_path = changed_attribute
-                if attr_name != "":
-                    extendend_attr_path = f"{attr_name}{extendend_attr_path}"
-                observer._notify_observers(extendend_attr_path, value)
-
     def _remove_observer_if_observable(self, name: str) -> None:
         key = int(name[1:-1])
         current_value = self.__getitem__(key)
 
         if isinstance(current_value, ObservableObject):
             current_value._remove_observer(self, name)
+
+    def _construct_extended_attr_path(
+        self, observer_attr_name: str, instance_attr_name: str
+    ) -> str:
+        if observer_attr_name != "":
+            return f"{observer_attr_name}{instance_attr_name}"
+        return instance_attr_name
 
 
 # TODO(mosmuell): keys must be strings.. Maybe with a metaclass?
@@ -136,18 +165,16 @@ class _ObservableDict(dict, ObservableObject):
 
         self._notify_observers(f"['{key}']", value)
 
-    def _notify_observers(self, changed_attribute: str, value: Any) -> None:
-        changed_attribute = str(changed_attribute)
-        for attr_name, observer_list in self._observers.items():
-            for observer in observer_list:
-                extendend_attr_path = changed_attribute
-                if attr_name != "":
-                    extendend_attr_path = f"{attr_name}{extendend_attr_path}"
-                observer._notify_observers(extendend_attr_path, value)
-
     def _remove_observer_if_observable(self, name: str) -> None:
         key = name[2:-2]
         current_value = self.get(key, None)
 
         if isinstance(current_value, ObservableObject):
             current_value._remove_observer(self, name)
+
+    def _construct_extended_attr_path(
+        self, observer_attr_name: str, instance_attr_name: str
+    ) -> str:
+        if observer_attr_name != "":
+            return f"{observer_attr_name}{instance_attr_name}"
+        return instance_attr_name

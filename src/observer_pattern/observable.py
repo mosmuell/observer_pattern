@@ -37,17 +37,16 @@ class Observable(ObservableObject):
 
         return value
 
-    def _notify_observers(self, changed_attribute: str, value: Any) -> None:
-        for attr_name, observer_list in self._observers.items():
-            for observer in observer_list:
-                extendend_attr_path = changed_attribute
-                if attr_name != "":
-                    extendend_attr_path = f"{attr_name}.{changed_attribute}"
-                observer._notify_observers(extendend_attr_path, value)
-
     def _remove_observer_if_observable(self, name: str) -> None:
         if not is_property_attribute(self, name):
             current_value = getattr(self, name, None)
 
             if isinstance(current_value, ObservableObject):
                 current_value._remove_observer(self, name)
+
+    def _construct_extended_attr_path(
+        self, observer_attr_name: str, instance_attr_name: str
+    ) -> str:
+        if observer_attr_name != "":
+            return f"{observer_attr_name}.{instance_attr_name}"
+        return instance_attr_name
