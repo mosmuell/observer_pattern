@@ -57,6 +57,29 @@ class ObservableObject(ABC):
                 )
                 observer._notify_changed(extendend_attr_path, value)
 
+    def _notify_change_start(self, changing_attribute: str) -> None:
+        """Notify observers that an attribute or item change process has started.
+
+        This method is called at the start of the process of modifying an attribute in
+        the observed `Observable` object. It registers the attribute as currently
+        undergoing a change. This registration helps in managing and tracking changes as
+        they occur, especially in scenarios where the order of changes or their state
+        during the transition is significant.
+
+        Args:
+            changing_attribute (str): The name of the attribute that is starting to
+            change. This is typically the full access path of the attribute in the
+            `Observable`.
+            value (Any): The value that the attribute is being set to.
+        """
+
+        for attr_name, observer_list in self._observers.items():
+            for observer in observer_list:
+                extended_attr_path = self._construct_extended_attr_path(
+                    attr_name, changing_attribute
+                )
+                observer._notify_change_start(extended_attr_path)
+
     def _initialise_new_objects(self, attr_name_or_key: Any, value: Any) -> Any:
         new_value = value
         if isinstance(value, list):
@@ -118,6 +141,7 @@ class _ObservableList(ObservableObject, list):
         if hasattr(self, "_observers"):
             self._remove_observer_if_observable(f"[{key}]")
             value = self._initialise_new_objects(f"[{key}]", value)
+            self._notify_change_start(f"[{key}]")
 
         super().__setitem__(key, value)
 
@@ -158,6 +182,7 @@ class _ObservableDict(dict, ObservableObject):
         if hasattr(self, "_observers"):
             self._remove_observer_if_observable(f"['{key}']")
             value = self._initialise_new_objects(key, value)
+            self._notify_change_start(f"['{key}']")
 
         super().__setitem__(key, value)
 
